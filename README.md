@@ -259,14 +259,21 @@ Changes not staged for commit:
   (use "git restore <file>..." to discard changes in working directory)
 	modified:   .gitignore
 ```
-Hacemos el commit de este fichero y comprobamos que también se ha incluido el fichero .gitignore:
+Hacemos el commit de este fichero y comprobamos que también se ha incluido el fichero `.gitignore`:
 ```shell
 $ git commit -m "README actualizado con el apartado de Hooks. Aún sin finalizar."
 $ git status
 ```
-La salida la reflejaremos en el siguiente commit:
+La salida obtenida:
 ```text
-# Aquí va la salida producida por el `Hook` y por `git status`
+[main 3beb4b7] README actualizado con el apartado de Hooks. Aún sin finalizar.
+ 2 files changed, 93 insertions(+), 1 deletion(-)
+
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
 ```
 
 ### Hook de `commit-msg`
