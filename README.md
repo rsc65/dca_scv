@@ -205,3 +205,92 @@ Switched to branch 'main'
 Your branch is up to date with 'origin/main'.
 ```
 Solo nos falta corregir el error y subir los cambios.
+
+---
+## Hooks
+Los `Hooks` de `Git` son guiones que se ejecutan automáticamente antes o después de ejecutar acciones de `Git`.
+
+Estos los podemos encontrar en el directorio `./.git/hooks`.
+Inicialmente tenemos trece ejemplos, y si quisiésemos probar alguno, tendríamos que quitar la extensión `.sample` y darles permiso de ejecución (que, por defecto, estas muestras lo incluyen).
+
+### Hook de `pre-commit`
+Este `Hook` se ejecutará antes de cada commit.
+
+Hemos creado una automatización que siempre añadirá el fichero `.gitignore` a cada commit nuevo que hagamos, si este ha cambiado.
+
+El fichero `pre-commit` ha quedado del siguiente modo: 
+```shell
+#!/bin/sh
+git add .gitignore
+```
+Ahora, vamos a modificar el `.gitignore` añadiendo los ficheos `.DS_Store` que genera automáticamente macOS al acceder a un directorio con el Finder.
+Haremos commit únicamente del `README` y se añadirá también el fichero `.gitignore`.
+Comenzamos haciendo `git status` para ver el contenido modificado:
+```shell
+$ git status
+```
+La salida obtenida:
+```text
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .gitignore
+	modified:   README.md
+```
+Añadimos el fichero `README.md`:
+```shell
+$ git add README.md
+$ git status
+```
+La salida obtenida:
+```text
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   README.md
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .gitignore
+```
+Hacemos el commit de este fichero y comprobamos que también se ha incluido el fichero .gitignore:
+```shell
+$ git commit -m "README actualizado con el apartado de Hooks. Aún sin finalizar."
+$ git status
+```
+La salida la reflejaremos en el siguiente commit:
+```text
+# Aquí va la salida producida por el `Hook` y por `git status`
+```
+
+### Hook de `commit-msg`
+Este `Hook` se ejecutará al intentar realizar un commit con un mensaje.
+
+En esta ocasión, vamos a comprobar que el mensaje no sea vacío.
+En este caso, emitiríamos un mensaje de error.
+
+La diferencia en este `Hook` respecto al anterior es que, en lugar de emplear un script de `shell`, hemos creado uno de `Python`.
+El script ha quedado del siguiente modo:
+```Python
+#!/usr/bin/env python3
+import sys
+with open(sys.argv[1], 'r') as f:
+	if (f.read() == ""):
+		print("ERROR. El mensaje del commit no puede ser vacío.")
+		sys.exit(1)
+```
+Ahora, vamos a intentar hacer un commit del fichero `README.md` con un mensaje vacío:
+```shell
+$ git add README.md
+$ git commit -m ""
+```
+La salida producida:
+```text
+ERROR. El mensaje del commit no puede ser vacío.
+```
